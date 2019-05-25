@@ -19,6 +19,8 @@
             </keep-alive>
         </div>
         <TabBar/>
+        <router-view name="detail">
+        </router-view>
     </div>
 </template>
 
@@ -40,7 +42,7 @@
                 if (msg==='ok'){
                     var nm=res.data.data.nm;
                     var id=res.data.data.id;
-                    console.log(this.$store.state.City.id,id);
+                    // console.log(this.$store.state.City.id,id);
                     if (this.$store.state.City.id  == id){
                         return;
                     }
