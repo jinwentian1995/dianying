@@ -1,37 +1,70 @@
 <template>
     <div class="movie_body">
-        <ul>
-            <li v-for="item in comingList" :key="item.id">
-                <div class="pic_show"><img :src="item.img | setWH('128.180')"></div>
-                <div class="info_list">
-                    <h2>{{item.nm}}</h2>
-                    <p><span class="person">{{item.wish}}</span> 人想看</p>
-                    <p>主演: {{item.star}}</p>
-                    <p>{{item.showInfo}}</p>
-                </div>
-                <div class="btn_pre">
-                    预售
-                </div>
-            </li>
-        </ul>
+        <Loading v-if="isLoading" ></Loading>
+        <Scroller :handleToScroll="handleToScroll" :handleToTouchEnd="handleToTouchEnd">
+            <ul>
+                <li class="pullDown">{{pullDownMsg}}</li>
+                <li v-for="item in comingList" :key="item.id">
+                    <div class="pic_show"><img :src="item.img | setWH('128.180')"></div>
+                    <div class="info_list">
+                        <h2>{{item.nm}}</h2>
+                        <p><span class="person">{{item.wish}}</span> 人想看</p>
+                        <p>主演: {{item.star}}</p>
+                        <p>{{item.showInfo}}</p>
+                    </div>
+                    <div class="btn_pre">
+                        预售
+                    </div>
+                </li>
+            </ul>
+        </Scroller>
     </div>
 </template>
 
 <script>
     export default {
         name: "ComingSoon",
-        data(){
+        data() {
             return {
-                comingList:[]
-            }},
-        mounted(){
-            this.axios.get('/api/movieComingList?cityId=10').then((res)=>{
-                var msg=res.data.msg;
-                if (msg==='ok'){
+                comingList: [],
+                pullDownMsg:'',
+                isLoading:true,
+                preCityId:-1,
+            }
+        },
+        activated() {
+            var cityId=this.$store.state.City.id;
+            if (cityId === this.preCityId){return;}
+            this.axios.get('/api/movieComingList?cityId='+cityId).then((res) => {
+                var msg = res.data.msg;
+                if (msg === 'ok') {
+                    this.isLoading=false;
                     this.comingList = res.data.data.comingList
+                    this.preCityId=cityId
                 }
 
             })
+        },
+        methods:{
+            handleToScroll(pros) {
+                if (pros.y > 30) {
+                    this.pullDownMsg = '正在刷新'
+                }
+            },
+            handleToTouchEnd(pros) {
+                if (pros.y > 30) {
+                    this.axios.get('/api/movieOnInfoList?cityId=11').then((res) => {
+                        var msg = res.data.msg;
+                        if (msg === 'ok') {
+                            this.pullDownMsg = '更新成功';
+                            setTimeout(() => {
+                                this.movieList = res.data.data.movieList;
+                                this.pullDownMsg = ''
+                            }, 1000);
+                        }
+                    });
+                }
+            }
         }
     }
 </script>
@@ -116,5 +149,14 @@
 
     .movie_body .btn_pre {
         background-color: #3c9fe6;
+    }
+    .movie_body .pullDown {
+        position: absolute;
+        margin: 0 auto;
+        padding: 0;
+        border: none;
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
     }
 </style>

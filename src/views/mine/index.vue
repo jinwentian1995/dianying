@@ -1,26 +1,35 @@
 <template>
     <div id="main">
-      <Header title="我的猫眼" />
+        <Loading v-if="isLoading"></Loading>
+        <Header title="我的猫眼"/>
         <div id="content">
-        <Login />
+            <Login/>
         </div>
-      <TabBar />
+        <TabBar/>
     </div>
 </template>
 
 <script>
-  import Header from '@/components/Header';
-  import TabBar from '@/components/TabBar';
-  import Login from '@/components/Login';
+    import Header from '@/components/Header';
+    import TabBar from '@/components/TabBar';
+    import Login from '@/components/Login';
 
-  export default {
-  name:'mine',
-  components:{
-    Header,
-    TabBar,
-    Login
-  }
-}
+    export default {
+        name: 'mine',
+        data() {
+            return {
+                isLoading: true,
+            }
+        },
+        components: {
+            Header,
+            TabBar,
+            Login
+        },
+        mounted() {
+            this.isLoading = false;
+        }
+    }
 </script>
 
 <style>

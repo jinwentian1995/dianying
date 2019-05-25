@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
-Vue.use(Vuex)
-
+import City from './city'
+Vue.use(Vuex);
+// 状态管理
 export default new Vuex.Store({
   state: {
 
@@ -12,5 +12,8 @@ export default new Vuex.Store({
   },
   actions: {
 
+  },
+  modules:{
+    City
   }
 })

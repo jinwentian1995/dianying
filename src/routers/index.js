@@ -12,7 +12,7 @@ export default new Router({
       movieRouter,
       mineRouter,
       cinemaRouter,
-      {
+      {// 打开展示首页重定向
           path:'/*',
           redirect:'/movie'
       }

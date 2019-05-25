@@ -30,6 +30,7 @@
           return {
               message:[],
               movieList:[],
+              preCityId:-1,
           }
         },
         methods : {
@@ -43,9 +44,12 @@
             message(newVal) {
                 // clearTimeout();
                 // setTimeout(); 防抖
+                // console.log('search');
+                var cityId=this.$store.state.City.id;
+                if (cityId === this.preCityId){return;}
                 var that = this;
                 this.cancelRequest();
-                this.axios.get('/api/searchList?cityId=10&kw='+newVal,{
+                this.axios.get('/api/searchList?cityId='+cityId + '&kw='+newVal,{
                     cancelToken: new this.axios.CancelToken(function(c){
                         that.source = c;
                     })
@@ -53,7 +57,8 @@
                     var msg =res.data.msg;
                     var movies= res.data.data.movies;
                     if (msg==='ok' &&movies){
-                        this.movieList=res.data.data.movies.list
+                        this.movieList=res.data.data.movies.list;
+                        this.preCityId=cityId
                     }
                 }).catch((err) => {
                     if (this.axios.isCancel(err)) {
